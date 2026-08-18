@@ -1,0 +1,110 @@
+* {
+    margin: 0;
+    padding: 0;
+    word-break: break-all;
+}
+
+.log {
+    margin: 20vh 0 40px;
+    text-align: center;
+}
+
+#tip {
+    color: red;
+}
+
+.main {
+    padding: 40px 14px 20px;
+    box-sizing: border-box;
+    width: min(100%, 800px);
+    margin: 0 auto;
+    line-height: 1.6;
+    overflow: hidden;
+}
+
+#content>h1 {
+    padding: 10px 0;
+}
+
+#content>h2,
+h3,
+h4,
+h5 {
+    padding: 8px 0;
+}
+
+#content p {
+    line-height: 1.8;
+    margin: 5px 0;
+}
+
+#content a {
+    color: #479FE3;
+    text-decoration: none;
+    margin: 0 2px;
+}
+
+#content blockquote {
+    color: gray;
+    position: relative;
+    margin: 5px 0 5px 1em;
+}
+#content blockquote::before {
+    content: '';
+    background-color: rgb(213, 213, 213);
+    position: absolute;
+    left: -1em;
+    top: 0;
+    width: 5px;
+    height: 100%;
+}
+
+#content code:not(pre > code) {
+    font-family: auto;
+    font-size: .9em;
+    background-color: rgb(234, 234, 234);
+    padding: .1em .4em;
+    margin: 0 .2em;
+    border-radius: 6px;
+}
+
+#content pre {
+    overflow-x: scroll;
+    background-color: rgb(241, 241, 241);
+    padding: 8px;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+#content ul,
+#content ol {
+    margin-left: 1em;
+}
+
+.footer {
+    margin: 8px 14px 40px;
+    color: gray;
+    line-height: 1.5;
+    font-size: .8em;
+    text-align: center;
+}
+
+.footer a {
+    color: inherit;
+    font-style: italic;
+}
+
+.footer p {
+    margin: 15px 0;
+}
+
+#date {
+    white-space: nowrap;
+}
+
+img {
+    max-width: 100%;
+    padding: 8px 0;
+    display: block;
+    margin: 0 auto;
+}
