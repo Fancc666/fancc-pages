@@ -215,6 +215,6 @@
     >
   </p>
   <p>技术支持请联系fancc@565455.xyz</p>
-  <p>Made with LOVE, at TJU.</p>
+  <p>Made with LOVE, at TJU. 开源于<a href="https://github.com/Fancc666/fancc-pages">Github</a>.</p>
   <p>By FANCC, 2026年8月</p>
 </div>
