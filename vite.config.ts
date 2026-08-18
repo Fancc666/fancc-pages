@@ -11,5 +11,8 @@ export default defineConfig({
         set: "./set.html"
       }
     }
+  },
+  server: {
+    open: './index.html'
   }
 })
