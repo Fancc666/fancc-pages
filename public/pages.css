@@ -81,6 +81,20 @@ h5 {
     margin-left: 1em;
 }
 
+#content table {
+    display: block;
+    border-collapse: collapse;
+    max-width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+#content table  * {
+    border: 1px solid black;
+    padding: 5px;
+}
+
 span.katex-display {
     overflow-x: scroll;
     overflow-y: hidden;
