@@ -4,6 +4,10 @@
     word-break: break-all;
 }
 
+#content::-webkit-scrollbar {
+    display: none;
+}
+
 .log {
     margin: 20vh 0 40px;
     text-align: center;
@@ -36,6 +40,7 @@ h5 {
 #content p {
     line-height: 1.8;
     margin: 5px 0;
+    overflow-x: auto;
 }
 
 #content a {
@@ -69,7 +74,7 @@ h5 {
 }
 
 #content pre {
-    overflow-x: scroll;
+    overflow-x: auto;
     background-color: rgb(241, 241, 241);
     padding: 8px;
     border-radius: 4px;
@@ -85,7 +90,7 @@ h5 {
     display: block;
     border-collapse: collapse;
     max-width: 100%;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
@@ -93,11 +98,6 @@ h5 {
 #content table  * {
     border: 1px solid black;
     padding: 5px;
-}
-
-span.katex-display {
-    overflow-x: scroll;
-    overflow-y: hidden;
 }
 
 .footer {
