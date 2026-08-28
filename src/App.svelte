@@ -21,18 +21,25 @@
 \`\`\``;
 
   interface ApiResponse<T> {
-    code: number;
-    msg: string;
-    data: T | null;
+    code: number,
+    msg: string,
+    data: T | null,
   }
 
   interface UploadResult {
-    path: string;
-    sec: string;
+    path: string,
+    sec: string,
   }
 
   interface DeleteResult {
-    affected: number;
+    affected: number,
+  }
+
+  interface UpdateCheckResult {
+    id: number,
+    uname: string,
+    content: string,
+    created_at: string,
   }
 
   type RequestStatus<T> =
@@ -47,8 +54,12 @@
   let state1 = $state<RequestStatus<UploadResult>>({ state: "idle" });
   let error1 = $state(""); // 表单校验错误
   let ucode = $state("");
+  let usec = $state("");
   let state2 = $state<RequestStatus<DeleteResult>>({ state: "idle" });
+  let state3 = $state<RequestStatus<UpdateCheckResult>>({ state: "idle" });
   let error2 = $state(""); // 表单校验错误
+  let error3 = $state(""); // 表单校验错误
+  let uploadMode = $state(0);
 
   /** 链接只在成功后存在，用 $derived 派生，不用手工同步三个变量 */
   const links = $derived.by(() => {
@@ -77,22 +88,43 @@
 
     error1 = "";
     state1 = { state: "loading" };
-    try {
-      const res = await fetch(`${host}/pages/upload.php`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ content, uname: uname.trim() || "匿名" }),
-      });
-      const json: ApiResponse<UploadResult> = await res.json();
-      if (json.code || !json.data) {
-        state1 = { state: "failed", code: json.code, msg: json.msg };
-        return;
+    if (uploadMode === 0) {
+      try {
+        const res = await fetch(`${host}/pages/upload.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ content, uname: uname.trim() || "匿名" }),
+        });
+        const json: ApiResponse<UploadResult> = await res.json();
+        if (json.code || !json.data) {
+          state1 = { state: "failed", code: json.code, msg: json.msg };
+          return;
+        }
+        state1 = { state: "success", result: json.data };
+      } catch {
+        state1 = { state: "network-error" };
       }
-      state1 = { state: "success", result: json.data };
-    } catch {
-      state1 = { state: "network-error" };
+    } else if (uploadMode === 1) {
+      try {
+        const res = await fetch(`${host}/pages/update.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ content, sec: usec, uname: uname.trim() || "匿名" }),
+        });
+        const json: ApiResponse<[]> = await res.json();
+        if (json.code) {
+          state1 = { state: "failed", code: json.code, msg: json.msg };
+          return;
+        }
+        state1 = { state: "idle" }
+        error1 = "您已成功修改内容，请使用原链接。";
+      } catch {
+        state1 = { state: "network-error" };
+      }
     }
   }
 
@@ -119,10 +151,83 @@
       state2 = { state: "network-error" };
     }
   }
+
+  async function try_getbysec() {
+    if (usec.trim().length === 0) {
+      error3 = "请输入操作码";
+      return;
+    }
+    
+    error3 = "";
+    state3 = { state: "loading" };
+    try {
+      const res = await fetch(
+        `${host}/pages/update.php?` +
+          new URLSearchParams({ sec: usec.trim() }).toString(),
+      );
+      const json: ApiResponse<UpdateCheckResult> = await res.json();
+      if (json.code || !json.data) {
+        state3 = { state: "failed", code: json.code, msg: json.msg };
+        return;
+      }
+      state3 = { state: "success", result: json.data };
+      content = state3.result.content;
+      uname = state3.result.uname;
+    } catch {
+      state3 = { state: "network-error" };
+    }
+  }
 </script>
+
+<style scoped>
+  .mode {
+    margin: 10px 0;
+  }
+  .mode > span {
+    user-select: none;
+    cursor: pointer;
+    margin-right: 2em;
+    color: black;
+    text-decoration: none;
+  }
+  .mode > span.active {
+    color: blue;
+    text-decoration: underline;
+  }
+</style>
 
 <div class="block">
   <h2>上传您的Markdown</h2>
+
+  <div class="mode">
+    <span class:active={uploadMode === 0} onclick={()=>{uploadMode = 0}}>新建模式</span>
+    <span class:active={uploadMode === 1} onclick={()=>{uploadMode = 1}}>修改模式</span>
+  </div>
+
+  {#if uploadMode === 1}
+    <form
+      onsubmit={(e) => {
+        e.preventDefault();
+        try_getbysec();
+      }}
+    >
+      <div style="margin: 10px 0;">
+        <span>查看现有内容</span>
+        <input type="text" placeholder="操作码" bind:value={usec} />
+        <button type="submit" disabled={state3.state === "loading"}>
+          {state3.state === "loading" ? "请稍候..." : "查看"}
+        </button>
+        {#if error3}
+          <p class="error">{error3}</p>
+        {/if}
+      </div>
+    </form>
+    {#if state3.state === "failed"}
+      <p class="error">ERROR[{state3.code}]: {state3.msg}</p>
+    {:else if state3.state === "network-error"}
+      <p class="error">网络错误，请稍后重试</p>
+    {/if}
+  {/if}
 
   <form
     onsubmit={(e) => {
