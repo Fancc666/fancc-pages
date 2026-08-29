@@ -95,9 +95,15 @@ h5 {
     white-space: nowrap;
 }
 
-#content table  * {
+#content table tr, 
+#content table td, 
+#content table th {
     border: 1px solid black;
     padding: 5px;
+}
+
+hr {
+    margin: 15px 0;
 }
 
 .footer {
